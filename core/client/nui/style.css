@@ -1,0 +1,4 @@
+body { font-family: Arial, sans-serif; background: #111; color: #eee; margin: 0; padding: 12px; }
+#app { max-width: 1000px; margin: 0 auto; }
+.faction { padding: 8px; border-bottom: 1px solid #333; cursor: pointer; }
+.rank { padding: 6px; border-bottom: 1px dashed #222; }

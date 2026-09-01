@@ -1,0 +1,144 @@
+-- Database schema for ESX Custom Template
+-- Save as database/schema.sql
+
+CREATE TABLE IF NOT EXISTS players (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  identifier VARCHAR(64) NOT NULL UNIQUE,
+  firstname VARCHAR(100),
+  lastname VARCHAR(100),
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS characters (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  player_id INT NOT NULL,
+  char_name VARCHAR(200),
+  dob DATE,
+  data JSON DEFAULT '{}',
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (player_id) REFERENCES players(id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS factions (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  name VARCHAR(100) NOT NULL,
+  tag VARCHAR(10) NOT NULL,
+  is_public TINYINT(1) DEFAULT 0,
+  head_identifier VARCHAR(64) DEFAULT NULL,
+  meta JSON DEFAULT '{}',
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS faction_ranks (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  faction_id INT NOT NULL,
+  name VARCHAR(100) NOT NULL,
+  rank_order INT NOT NULL DEFAULT 0,
+  pay INT DEFAULT 0,
+  priority INT DEFAULT 0,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (faction_id) REFERENCES factions(id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS faction_permissions (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  faction_id INT NOT NULL,
+  rank_id INT NOT NULL,
+  permission_key VARCHAR(100) NOT NULL,
+  allowed TINYINT(1) DEFAULT 0,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (faction_id) REFERENCES factions(id) ON DELETE CASCADE,
+  FOREIGN KEY (rank_id) REFERENCES faction_ranks(id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS faction_members (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  faction_id INT NOT NULL,
+  character_id INT NOT NULL,
+  identifier VARCHAR(64) NOT NULL,
+  rank_id INT DEFAULT NULL,
+  on_duty TINYINT(1) DEFAULT 0,
+  joined_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (faction_id) REFERENCES factions(id) ON DELETE CASCADE,
+  FOREIGN KEY (character_id) REFERENCES characters(id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS faction_vehicles (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  faction_id INT NOT NULL,
+  model VARCHAR(100),
+  plate VARCHAR(20) UNIQUE,
+  livery INT DEFAULT 0,
+  metadata JSON DEFAULT '{}',
+  stored TINYINT(1) DEFAULT 1,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (faction_id) REFERENCES factions(id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS faction_armory (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  faction_id INT NOT NULL,
+  item_key VARCHAR(100) NOT NULL,
+  amount INT DEFAULT 1,
+  metadata JSON DEFAULT '{}',
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (faction_id) REFERENCES factions(id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS faction_storage (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  faction_id INT NOT NULL,
+  name VARCHAR(100),
+  slots INT DEFAULT 100,
+  items JSON DEFAULT '[]',
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (faction_id) REFERENCES factions(id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS items (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  name VARCHAR(100),
+  label VARCHAR(150),
+  stackable TINYINT(1) DEFAULT 1,
+  weight DECIMAL(8,2) DEFAULT 0.00,
+  metadata JSON DEFAULT '{}'
+);
+
+CREATE TABLE IF NOT EXISTS inventory (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  owner_identifier VARCHAR(64) NOT NULL,
+  slot INT NOT NULL,
+  item_id INT NOT NULL,
+  amount INT DEFAULT 1,
+  metadata JSON DEFAULT '{}',
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (item_id) REFERENCES items(id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS vehicles (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  owner_identifier VARCHAR(64),
+  plate VARCHAR(20) UNIQUE,
+  model VARCHAR(100),
+  mods JSON DEFAULT '{}',
+  stored TINYINT(1) DEFAULT 1,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS records (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  type VARCHAR(50),
+  author_identifier VARCHAR(64),
+  faction_id INT DEFAULT NULL,
+  data JSON,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS logs (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  category VARCHAR(50),
+  actor_identifier VARCHAR(64),
+  action VARCHAR(255),
+  data JSON,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
