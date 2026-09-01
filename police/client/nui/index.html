@@ -1,0 +1,21 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>MDT</title>
+    <link rel="stylesheet" href="style.css">
+  </head>
+  <body>
+    <div id="app">
+      <h1>MDT</h1>
+      <div id="records"></div>
+      <div id="create">
+        <select id="type"><option value="report">Report</option><option value="warrant">Warrant</option></select>
+        <textarea id="data" placeholder="Daten als JSON"></textarea>
+        <button id="createBtn">Erstellen</button>
+      </div>
+      <button id="closeBtn">Schließen</button>
+    </div>
+    <script src="app.js"></script>
+  </body>
+</html>
