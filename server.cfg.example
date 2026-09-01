@@ -1,0 +1,33 @@
+# Beispiel server.cfg für ESX Custom Template
+
+# MySQL/oxmysql Verbindung (ersetze mit deinen Werten)
+set mysql_connection_string "server=127.0.0.1;uid=fivem;password=securepassword;database=fivem_rp;charset=utf8mb4"
+
+# Ressourcen-Startreihenfolge (oxmysql muss vor ESX & core starten)
+ensure oxmysql
+ensure es_extended
+
+# Core-Resource (dynamisches Fraktionssystem)
+ensure core
+
+# Police MVP
+ensure police
+
+# Weitere Module (falls vorhanden)
+# ensure ems
+# ensure fire
+# ensure mechanic
+# ensure vehicles
+# ensure inventory
+# ensure phone
+# ensure admin
+
+# Allgemeine Server-Einstellungen
+sv_hostname "ESX Custom Template"
+endpoint_add_tcp "0.0.0.0:30120"
+endpoint_add_udp "0.0.0.0:30120"
+
+# License key (falls benötigt)
+# sv_licenseKey "YOUR_LICENSE_KEY"
+
+# Weitere Konfigurationen... (autostart, resources)
